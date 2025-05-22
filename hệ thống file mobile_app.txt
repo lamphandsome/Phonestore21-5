@@ -1,0 +1,10 @@
+lib/
+├── main.dart
+├── models/
+│   └── product.dart              // Khai báo model dữ liệu
+├── services/
+│   └── api_service.dart          // Hàm gọi API từ backend
+├── screens/
+│   └── home_screen.dart          // UI chính để hiển thị dữ liệu
+├── widgets/
+│   └── product_card.dart         // (tùy chọn) widget hiển thị item
