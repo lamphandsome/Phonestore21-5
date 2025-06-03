@@ -15,28 +15,28 @@ async function loadAProduct() {
         });
         var result = await response.json();
         console.log(result)
-        document.getElementById("manhinh").value = result.screen
+        // document.getElementById("manhinh").value = result.screen
         document.getElementById("tensp").value = result.name
-        document.getElementById("hedieuhanh").value = result.operaSystem
+        // document.getElementById("hedieuhanh").value = result.operaSystem
         document.getElementById("price").value = result.price
         linkbanner = result.imageBanner
         document.getElementById("imgpreview").src = result.imageBanner
         tinyMCE.get('editor').setContent(result.description)
-        document.getElementById("khesim").value = result.sim
+        // document.getElementById("khesim").value = result.sim
         document.getElementById("masp").value = result.code
-        document.getElementById("camtruoc").value = result.frontCamera
-        document.getElementById("cpu").value = result.cpu
+        // document.getElementById("camtruoc").value = result.frontCamera
+        // document.getElementById("cpu").value = result.cpu
         document.getElementById("danhmucsp").value = result.category.id
-        document.getElementById("baomat").value = result.securityInfor
+        // document.getElementById("baomat").value = result.securityInfor
         document.getElementById("oldprice").value = result.oldPrice
         document.getElementById("hangsx").value = result.tradeMark.id
-        document.getElementById("camsau").value = result.backCamera
-        document.getElementById("chatlieu").value = result.material
-        document.getElementById("tinhnangdacbiet").value = result.specialFeature
-        document.getElementById("mangdd").value = result.mobileNetwork
-        var phukien = result.accessory.split(",");
-        console.log(phukien);
-        $("#listdpar").val(phukien).change();;
+        // document.getElementById("camsau").value = result.backCamera
+        // document.getElementById("chatlieu").value = result.material
+        // document.getElementById("tinhnangdacbiet").value = result.specialFeature
+        // document.getElementById("mangdd").value = result.mobileNetwork
+        // var phukien = result.accessory.split(",");
+        // console.log(phukien);
+        // $("#listdpar").val(phukien).change();;
         var main = ''
         for (i = 0; i < result.productImages.length; i++) {
             main += `<div id="imgdathem${result.productImages[i].id}" class="col-md-2 col-sm-4 col-6">
@@ -87,21 +87,21 @@ async function saveProduct() {
         url = 'http://localhost:8080/api/product/admin/update';
     }
 
-    var manhinh = document.getElementById("manhinh").value
+    // var manhinh = document.getElementById("manhinh").value
     var tensp = document.getElementById("tensp").value
-    var hedieuhanh = document.getElementById("hedieuhanh").value
-    var phukien = $("#listdpar").val().toString();
-    var khesim = document.getElementById("khesim").value
+    // var hedieuhanh = document.getElementById("hedieuhanh").value
+    // var phukien = $("#listdpar").val().toString();
+    // var khesim = document.getElementById("khesim").value
     var masp = document.getElementById("masp").value
-    var camtruoc = document.getElementById("camtruoc").value
-    var cpu = document.getElementById("cpu").value
+    // var camtruoc = document.getElementById("camtruoc").value
+    // var cpu = document.getElementById("cpu").value
     var danhmucsp = document.getElementById("danhmucsp").value
-    var baomat = document.getElementById("baomat").value
+    // var baomat = document.getElementById("baomat").value
     var hangsx = document.getElementById("hangsx").value
-    var camsau = document.getElementById("camsau").value
-    var chatlieu = document.getElementById("chatlieu").value
-    var tinhnangdacbiet = document.getElementById("tinhnangdacbiet").value
-    var mangdd = document.getElementById("mangdd").value
+    // var camsau = document.getElementById("camsau").value
+    // var chatlieu = document.getElementById("chatlieu").value
+    // var tinhnangdacbiet = document.getElementById("tinhnangdacbiet").value
+    // var mangdd = document.getElementById("mangdd").value
     var price = document.getElementById("price").value
     var oldprice = document.getElementById("oldprice").value
     if(price == null || price == ""){
@@ -124,17 +124,7 @@ document.getElementById("loading").style.display = 'block'
         "oldPrice": oldprice,
         "imageBanner": linkbanner,
         "description": mota,
-        "screen": manhinh,
-        "frontCamera": camtruoc,
-        "backCamera": camsau,
-        "operaSystem": hedieuhanh,
-        "cpu": cpu,
-        "material": chatlieu,
-        "accessory": phukien,
-        "specialFeature": tinhnangdacbiet,
-        "sim": khesim,
-        "securityInfor": baomat,
-        "mobileNetwork": mangdd,
+        // "accessory": phukien,
         "tradeMarkId": hangsx,
         "categoryId": danhmucsp,
         "linkLinkImages": listLinkImg,
