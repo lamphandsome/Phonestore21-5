@@ -24,7 +24,7 @@ function loadMenu(){
     <div class="headertop">
         <div class="row">
             <div class="col-sm-3">
-                <a href="index"><img src="image/aptech_mobile_logo_clean.png" class="logoheader"></a>
+                <a href="index"><img src="/image/logoo" class="logoheader"></a>
             </div>
             <div class="col-sm-6">
                 <form action="product" class="searchheader">
