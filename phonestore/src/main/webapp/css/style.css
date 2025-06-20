@@ -29,12 +29,9 @@ body{
 .headertop{
     padding-top: 15px;
 }
-
-.logoheader {
+.logoheader{
     width: 100%;
 }
-
-
 .btnkiemtradh{
     display: block;
     background: #00483e;
@@ -2023,5 +2020,3 @@ tr {
     }
    
 }
-
-

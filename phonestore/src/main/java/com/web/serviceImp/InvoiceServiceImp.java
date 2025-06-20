@@ -25,7 +25,11 @@ import org.springframework.stereotype.Component;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +74,32 @@ public class InvoiceServiceImp implements InvoiceService {
 
     @Autowired
     private InvoiceMapper invoiceMapper;
+
+    public List<Invoice> findByShipperAndFilter(Long shipperId, String start, String end, String payTypeStr) {
+        java.util.Date startDate = null;
+        java.util.Date endDate = null;
+        PayType payType = null;
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (start != null && !start.isEmpty()) {
+                startDate = sdf.parse(start);
+            }
+            if (end != null && !end.isEmpty()) {
+                endDate = sdf.parse(end);
+            }
+            if (payTypeStr != null && !payTypeStr.isEmpty() && !payTypeStr.equals("-1")) {
+                payType = PayType.valueOf(payTypeStr); // Chuyển String thành enum
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return invoiceRepository.findByShipperWithFilters(shipperId, startDate, endDate, payType);
+    }
+
+
+
 
     @Override
     public InvoiceResponse create(InvoiceRequest invoiceRequest) {
@@ -158,6 +188,22 @@ public class InvoiceServiceImp implements InvoiceService {
         cartService.removeCart();
         return null;
     }
+
+
+
+    public List<Invoice> findInvoicesWithStatus() {
+        return invoiceRepository.findByStatusInvoice();
+    }
+
+    public void assignShipper(Long invoiceId, Shipper shipper) {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElse(null);
+        if (invoice != null && invoice.getStatusInvoice() == StatusInvoice.DA_XAC_NHAN) {
+            invoice.setShipper(shipper);
+            invoice.setStatusInvoice(StatusInvoice.DANG_GUI); // Cập nhật trạng thái thành "Đang giao"
+            invoiceRepository.save(invoice);
+        }
+    }
+
 
     @Override
     public InvoiceResponse updateStatus(Long invoiceId, StatusInvoice statusInvoice) {

@@ -16,6 +16,8 @@ public interface UserService {
     public TokenDto login(String username, String password, String tokenFcm)  throws Exception;
 
     public User regisUser(User user);
+    public User findByUsername(String username);
+    public User findById(Long id);
 
     public User addAccount(User user, String role);
 

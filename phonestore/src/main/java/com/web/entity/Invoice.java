@@ -47,6 +47,11 @@ public class Invoice {
     private Double shipCost;
 
     @ManyToOne
+    @JoinColumn(name = "shipper_id")
+    private Shipper shipper;
+
+
+    @ManyToOne
     @JoinColumn(name = "user_address_id")
     private UserAddress userAddress;
 

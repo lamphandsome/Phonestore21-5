@@ -70,9 +70,14 @@ public class CartServiceImp implements CartService {
     @Override
     public void upQuantity(Long id) {
         Cart cart = cartRepository.findById(id).get();
-        cart.setQuantity(cart.getQuantity() + 1);
-        cartRepository.save(cart);
+        ProductColor productColor = cart.getProductColor();
+        if (cart.getQuantity() < productColor.getQuantity()) {
+            cart.setQuantity(cart.getQuantity() + 1);
+            cartRepository.save(cart);
+        }
     }
+
+
 
     @Override
     public void downQuantity(Long id) {

@@ -61,6 +61,9 @@ async function login() {
         if (result.user.authorities.name === "ROLE_EMPLOYEE") {
             window.location.href = '/employee/invoice';
         }
+        if (result.user.authorities.name === "ROLE_SHIPPER") {
+            window.location.href = '/shipper';
+        }
     }
     if (response.status == exceptionCode) {
         if (result.errorCode == 300) {
