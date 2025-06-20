@@ -69,11 +69,7 @@
                     <input id="tensp" class="inputcontrol">
 
                     <label class="lbadd">Giá tiền hiện tại</label>
-                    <div class="dropdown">
-                        <input id="price" class="form-control dropdown-toggle" data-bs-toggle="dropdown">
-                        <ul id="price-suggestions" class="dropdown-menu w-100">
-                        </ul>
-                    </div>
+                    <input id="price" class="inputcontrol">
                 </div>
                 <div class="col-sm-3">
                     <label class="lbadd">Mã sản phẩm</label>
@@ -88,14 +84,8 @@
                     <select id="hangsx" class="inputcontrol">
                         <option value="IOS">Táo</option>
                     </select>
-
-                        <label class="lbadd">Giá tiền cũ</label>
-                    <div style="position: relative;">
-                        <input id="oldprice" class="inputcontrol">
-                        <ul id="oldprice-suggestions" class="list-group"
-                            style="position:absolute; top:100%; left:0; right:0; z-index:999; display:none;"></ul>
-                    </div>
-
+                    <label class="lbadd">Giá tiền cũ</label>
+                    <input id="oldprice" class="inputcontrol">
                 </div>
                 <div class="col-sm-12">
                     <div id="preview" class="row">
@@ -249,109 +239,4 @@
         placeholder: "Chọn phụ kiện đi kèm",
     });
 </script>
-
-<script>
-    function formatCurrencyInput(input) {
-        let raw = input.value.replace(/\D/g, '');
-        if (!raw) return input.value = '';
-        input.value = Number(raw).toLocaleString('vi-VN');
-    }
-
-    // Format khi nhập vào
-    $('#price, #oldprice, #giaban, #giabanupdate').on('input', function () {
-        formatCurrencyInput(this);
-    });
-</script>
-
-<script>
-    function formatCurrency(val) {
-        return Number(val).toLocaleString('vi-VN');
-    }
-
-    $('#price').on('input', function () {
-        let inputVal = this.value.replace(/\D/g, '');
-        let container = $('#price-suggestions');
-        container.empty().hide();
-
-        if (inputVal.length === 0) return;
-
-        let number = parseInt(inputVal, 10);
-        if (isNaN(number)) return;
-
-        [10, 100, 1000, 10000].forEach(multiplier => {
-            let suggestion = number * multiplier;
-            if (suggestion >= 1000) {
-                container.append(`<li class="list-group-item list-group-item-action">${formatCurrency(suggestion)}</li>`);
-            }
-        });
-
-        container.show();
-    });
-
-    $('#price-suggestions').on('click', 'li', function () {
-        $('#price').val($(this).text());
-        $('#price-suggestions').hide();
-    });
-    bindPriceSuggestion('#oldprice', '#oldprice-suggestions');
-
-</script>
-<script>
-$('#price').on('input', function () {
-let inputVal = this.value.replace(/\D/g, '');
-let container = $('#price-suggestions');
-container.empty();
-
-if (!inputVal) return;
-
-[10, 100, 1000, 10000].forEach(mult => {
-let val = parseInt(inputVal) * mult;
-if (val >= 1000) {
-container.append(`<li><a class="dropdown-item">${val.toLocaleString('vi-VN')}</a></li>`);
-}
-});
-});
-$('#price-suggestions').on('click', '.dropdown-item', function () {
-$('#price').val($(this).text());
-});
-</script>
-
-<script>
-    function bindPriceSuggestion(inputSelector, suggestionSelector) {
-        const $input = $(inputSelector);
-        const $suggest = $(suggestionSelector);
-
-        $input.on('input', function () {
-            let val = this.value.replace(/\D/g, '');
-            $suggest.empty();
-
-            if (!val || val === '0') return $suggest.hide();
-
-            let num = parseInt(val);
-            [10, 100, 1000, 10000].forEach(mult => {
-                let g = num * mult;
-                if (g >= 1000) {
-                    $suggest.append(`<li class="list-group-item list-group-item-action">${g.toLocaleString('vi-VN')}</li>`);
-                }
-            });
-
-            $suggest.show();
-        });
-
-        $suggest.on('click', 'li', function () {
-            $input.val($(this).text());
-            $suggest.hide();
-        });
-
-        $(document).on('click', function (e) {
-            if (!$(e.target).closest(inputSelector + ', ' + suggestionSelector).length) {
-                $suggest.hide();
-            }
-        });
-    }
-
-    // Gọi hàm sau khi đã định nghĩa
-    bindPriceSuggestion('#oldprice', '#oldprice-suggestions');
-</script>
-
-
 </html>

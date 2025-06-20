@@ -8,5 +8,5 @@ import lombok.Getter;
 public enum StatusInvoice {
 
     DANG_CHO_XAC_NHAN,
-    DA_XAC_NHAN, DA_GUI, DA_NHAN, DA_HUY, KHONG_NHAN_HANG;
+    DA_XAC_NHAN, DANG_GUI, DA_NHAN, DA_HUY, KHONG_NHAN_HANG;
 }

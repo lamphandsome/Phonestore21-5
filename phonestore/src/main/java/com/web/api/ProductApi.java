@@ -8,7 +8,9 @@ import com.web.repository.ProductRepository;
 import com.web.servive.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -63,6 +65,7 @@ public class ProductApi {
     public ResponseEntity<?> findByAdmin(@RequestParam(value = "category", required = false) Long category,
                                          @RequestParam(value = "trademark", required = false) Long trademark,
                                          @RequestParam(value = "search", required = false) String search, Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("id").descending());
         Page<Product> response = productService.searchByAdmin(search, category, trademark, pageable);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

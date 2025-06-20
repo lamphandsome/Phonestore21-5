@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Đơn hàng của Shipper</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.datatables.net/1.13.2/css/dataTables.bootstrap5.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+  <script src="js/menu.js"></script>
+
+  <style>
+    /* CSS để làm cho nút "Đã giao xong" xuất hiện trên một dòng mới */
+    .deliver-btn {
+      display: block; /* Hoặc display: inline-block; nếu muốn có khoảng cách */
+      margin-top: 5px; /* Khoảng cách từ badge */
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Shipper Dashboard</a>
+    <button onclick="dangXuat()">Logout</button>
+
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <label for="start" class="form-label visually-hidden">Từ ngày</label>
+      <input type="date" id="start" class="form-control" placeholder="Từ ngày" th:value="${selectedStart}"/>
+    </div>
+    <div class="col-md-3">
+      <label for="end" class="form-label visually-hidden">Đến ngày</label>
+      <input type="date" id="end" class="form-control" placeholder="Đến ngày" th:value="${selectedEnd}"/>
+    </div>
+    <div class="col-md-4">
+      <label for="type" class="form-label visually-hidden">Loại thanh toán</label>
+      <select id="type" class="form-select">
+        <option value="-1" th:selected="${selectedPayType == null or selectedPayType == '-1'}">-- Tất cả loại thanh toán --</option>
+        <option value="MOMO" th:selected="${selectedPayType == 'MOMO'}">MOMO</option>
+        <option value="COD" th:selected="${selectedPayType == 'COD'}">COD</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-primary w-100" onclick="loadInvoice()">
+        <i class="fa fa-filter"></i> Lọc
+      </button>
+    </div>
+  </div>
+
+  <h4 class="mb-3">Đơn hàng bạn đã nhận</h4>
+  <div class="table-responsive">
+    <table id="myOrdersTable" class="table table-striped table-bordered">
+      <thead class="table-light">
+      <tr>
+        <th>Mã đơn</th><th>Ngày đặt</th><th>Tên</th><th>Địa chỉ</th>
+        <th>Giá trị</th><th>Phí ship</th><th>Thanh toán</th><th>Vận chuyển</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${myOrders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#dates.format(order.createdDate, 'dd/MM/yyyy')}"></td>
+        <td th:text="${order.userAddress?.fullname}"></td> <td th:text="${order.address}"></td>
+        <td th:text="${#numbers.formatCurrency(order.totalAmount)}"></td>
+        <td th:text="${#numbers.formatCurrency(order.shipCost)}"></td>
+        <td th:text="${order.payType}"></td>
+        <td>
+          <span class="badge bg-info text-dark" th:text="${order.statusInvoice?.name()}"></span>
+          <button type="button" class="btn btn-sm btn-primary deliver-btn"
+                  th:if="${order.statusInvoice?.name() == 'DANG_GUI'}"
+                  th:attr="data-id=${order.id}">
+            <i class="fa fa-truck"></i> Đã giao xong
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 class="mt-5 mb-3">Đơn hàng chờ nhận</h4>
+  <div class="table-responsive">
+    <table id="availableOrdersTable" class="table table-striped table-bordered">
+      <thead class="table-light">
+      <tr>
+        <th>Mã đơn</th><th>Ngày đặt</th><th>Tên</th><th>Địa chỉ</th>
+        <th>Giá trị</th><th>Phí ship</th><th>Thanh toán</th><th>Thao tác</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${availableOrders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#dates.format(order.createdDate, 'dd/MM/yyyy')}"></td>
+        <td th:text="${order.userAddress?.fullname}"></td>
+        <td th:text="${order.address}"></td>
+        <td th:text="${#numbers.formatCurrency(order.totalAmount)}"></td>
+        <td th:text="${#numbers.formatCurrency(order.shipCost)}"></td>
+        <td th:text="${order.payType}"></td>
+        <td>
+          <button type="button" class="btn btn-success btn-sm accept-btn"
+                  th:attr="data-id=${order.id},
+                           data-date=${#dates.format(order.createdDate, 'dd/MM/yyyy')},
+                           data-fullname=${order.userAddress?.fullname},
+                           data-address=${order.address},
+                           data-total=${order.totalAmount},
+                           data-ship=${order.shipCost},
+                           data-paytype=${order.payType}">
+            <i class="fa fa-check"></i> Nhận giao
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 class="mt-5 mb-3">Đơn hàng đã hoàn thành của bạn</h4>
+  <div class="table-responsive">
+    <table id="myOrdersDoneTable" class="table table-striped table-bordered">
+      <thead class="table-light">
+      <tr>
+        <th>Mã đơn</th><th>Ngày đặt</th><th>Tên</th><th>Địa chỉ</th>
+        <th>Giá trị</th><th>Phí ship</th><th>Thanh toán</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${myOrdersDone}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#dates.format(order.createdDate, 'dd/MM/yyyy')}"></td>
+        <td th:text="${order.userAddress?.fullname}"></td>
+        <td th:text="${order.address}"></td>
+        <td th:text="${#numbers.formatCurrency(order.totalAmount)}"></td>
+        <td th:text="${#numbers.formatCurrency(order.shipCost)}"></td>
+        <td th:text="${order.payType}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.2/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+  function dangXuat() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.replace('/dangnhap')
+  }
+</script>
+<script th:inline="javascript">
+  $(document).ready(function () {
+    // 1. Delegated event cho nút "Đã giao xong"
+    $('body').on('click', '#myOrdersTable .deliver-btn', function () {
+      const invoiceId = $(this).data('id');
+      const button = $(this);
+
+      if (!confirm("Xác nhận đã giao hàng thành công?")) return;
+
+      $.ajax({
+        type: 'POST',
+        url: /*[[@{/shipper/mark-delivered}]]*/ '/shipper/mark-delivered',
+        data: { invoiceId: invoiceId },
+        success: (response) => {
+          alert("Đã giao hàng thành công!");
+          const row = button.closest('tr');
+          const myOrdersDataTable = $('#myOrdersTable').DataTable();
+          // Cột "Vận chuyển" là cột thứ 7 (index 7)
+          myOrdersDataTable.cell(row, 7).data('<span class="badge bg-success">ĐÃ_GIAO</span>').draw(false);
+        },
+        error: (xhr, status, error) => {
+          console.error("AJAX Error: ", status, error, xhr.responseText);
+        }
+      });
+    });
+
+    // 2. Khởi tạo DataTables với định nghĩa cột rõ ràng
+    $('#myOrdersTable').DataTable({
+      paging: true,
+      searching: false,
+      columns: [
+        { data: 0 }, // Mã đơn (index 0)
+        { data: 1 }, // Ngày đặt (index 1)
+        { data: 2 }, // Tên (index 2)
+        { data: 3 }, // Địa chỉ (index 3)
+        { data: 4 }, // Giá trị (index 4)
+        { data: 5 }, // Phí ship (index 5)
+        { data: 6 }, // Thanh toán (index 6)
+        { data: 7 }  // Vận chuyển (index 7), chứa HTML badge và button
+      ]
+    });
+
+    $('#availableOrdersTable').DataTable({
+      paging: true,
+      searching: false,
+      columns: [
+        { data: 0 }, // Mã đơn
+        { data: 1 }, // Ngày đặt
+        { data: 2 }, // Tên
+        { data: 3 }, // Địa chỉ
+        { data: 4 }, // Giá trị
+        { data: 5 }, // Phí ship
+        { data: 6 }, // Thanh toán
+        { data: 7 }  // Thao tác (button)
+      ]
+    });
+
+    $('#myOrdersDoneTable').DataTable({
+      paging: true,
+      searching: false,
+      columns: [
+        { data: 0 }, // Mã đơn
+        { data: 1 }, // Ngày đặt
+        { data: 2 }, // Tên
+        { data: 3 }, // Địa chỉ
+        { data: 4 }, // Giá trị
+        { data: 5 }, // Phí ship
+        { data: 6 }  // Thanh toán
+      ]
+    });
+
+    // 3. Delegated event cho nút "Nhận giao"
+    $('body').on('click', '#availableOrdersTable .accept-btn', function () {
+      const button = $(this);
+      const invoiceId = button.data('id');
+
+      if (!confirm("Bạn có chắc chắn muốn nhận đơn này không?")) return;
+
+      $.ajax({
+        type: 'POST',
+        url: /*[[@{/shipper/accept-order}]]*/ '/shipper/accept-order',
+        data: { invoiceId: invoiceId },
+        success: function () {
+          alert("Đã nhận đơn thành công!");
+
+          const totalAmount = formatCurrency(button.data('total'));
+          const shipCost = formatCurrency(button.data('ship'));
+
+          const newRowData = [
+            invoiceId,
+            button.data('date'),
+            button.data('fullname'),
+            button.data('address'),
+            totalAmount,
+            shipCost,
+            button.data('paytype'),
+            // Cột vận chuyển: badge + nút "Đã giao xong"
+            '<span class="badge bg-info text-dark">ĐANG_GUI</span><button type="button" class="btn btn-sm btn-primary deliver-btn mt-1" data-id="' + invoiceId + '"><i class="fa fa-truck"></i> Đã giao xong</button>'
+          ];
+
+          const myOrdersDataTable = $('#myOrdersTable').DataTable();
+          const availableOrdersDataTable = $('#availableOrdersTable').DataTable();
+
+          myOrdersDataTable.row.add(newRowData).draw(false);
+          availableOrdersDataTable.row(button.closest('tr')).remove().draw(false);
+
+          // Cần draw một lần sau khi tất cả các thao tác thêm/xóa hoàn tất
+          myOrdersDataTable.draw();
+          availableOrdersDataTable.draw();
+        },
+        error: (xhr, status, error) => {
+          console.error("AJAX Error: ", status, error, xhr.responseText);
+        }
+      });
+    });
+
+    // Hàm formatCurrency của bạn - CẦN GIỮ LẠI ĐỂ DÙNG KHI CẬP NHẬT DỮ LIỆU ĐỘNG BẰNG JS
+    function formatCurrency(amount) {
+      let num = Math.round(parseFloat(String(amount).replace(/[^0-9.-]+/g, "")));
+
+      if (isNaN(num)) {
+        return amount;
+      }
+
+      let formattedNumber = new Intl.NumberFormat('vi-VN', {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(num);
+
+      return formattedNumber + ' ₫';
+    }
+  });
+
+  function loadInvoice() {
+    const start = $('#start').val();
+    const end = $('#end').val();
+    const type = $('#type').val();
+    const url = `/shipper?start=${start}&end=${end}&type=${type}`;
+    window.location.href = url;
+  }
+</script>
+
+</body>
+</html>
+
+

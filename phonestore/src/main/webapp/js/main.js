@@ -24,7 +24,7 @@ function loadMenu(){
     <div class="headertop">
         <div class="row">
             <div class="col-sm-3">
-                <a href="index"><img src="/image/logoo" class="logoheader"></a>
+                <a href="index"><img style="width: 65px" src="image/1fda76a01b2f4c86b92642e469f58fa0-free.png" class="logoheader"></a>
             </div>
             <div class="col-sm-6">
                 <form action="product" class="searchheader">
@@ -142,8 +142,8 @@ function loadFooter(){
             <h6 class="text-uppercase fw-bold mb-4">Về chúng tôi</h6>
             <p><a href="#!" class="text-reset">Hotline: 09723748234</a></p>
             <p><a href="#!" class="text-reset">Email: phonestore@gmail.com</a></p>
-            <p><a href="#!" class="text-reset">Địa chỉ CS1: Số 8, Tôn Thất Thuyết, Mỹ Đình, Hà nội</a></p>
-            <p><a href="#!" class="text-reset">Địa chỉ CS2: Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà nội</a></p>
+            <p><a href="#!" class="text-reset">Địa chỉ cs1: Số 1, đại cồ việt, Hai Bà Trưng, Hà nội</a></p>
+            <p><a href="#!" class="text-reset">Địa chỉ cs2: Số 1, đại cồ việt, Hai Bà Trưng, Hà nội</a></p>
           </div>
           <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
             <h6 class="text-uppercase fw-bold mb-4">Hỗ trợ khách hàng</h6>
@@ -156,7 +156,7 @@ function loadFooter(){
             <h6 class="text-uppercase fw-bold mb-4">Liên hệ</h6>
             <p><i class="fas fa-home me-3"></i> Hà nội, Việt Nam</p>
             <p><i class="fas fa-envelope me-3"></i> shop@gmail.com</p>
-            <p><i class="fas fa-phone me-3"></i> + 01 234 567 89</p>
+            <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
             <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
           </div>
         </div>

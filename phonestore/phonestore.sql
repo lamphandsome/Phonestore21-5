@@ -13685,3 +13685,18 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+CREATE TABLE `shipper` (
+                           `id` bigint NOT NULL AUTO_INCREMENT,
+                           `user_id` bigint NOT NULL,
+                           `vehicle_info` varchar(255) DEFAULT NULL,
+                           `available` bit(1) DEFAULT b'1', -- 1: sẵn sàng nhận đơn
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `UK_shipper_user` (`user_id`),
+                           CONSTRAINT `FK_shipper_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+ALTER TABLE `invoice`
+    ADD COLUMN `shipper_id` bigint DEFAULT NULL,
+ADD CONSTRAINT `FK_invoice_shipper` FOREIGN KEY (`shipper_id`) REFERENCES `shipper` (`id`);
