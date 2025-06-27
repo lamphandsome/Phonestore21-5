@@ -653,7 +653,17 @@ async function deleteProduct(id) {
 }
 
 async function deleteProductImage(id) {
-    var con = confirm("Bạn chắc chắn muốn xóa ảnh sản phẩm này?");
+    const result = await Swal.fire({
+            title: 'Xác nhận',
+            text: "Bạn chắc chắn muốn xóa ảnh sản phẩm này?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        });
+        if (!result.isConfirmed) return;
     if (con == false) {
         return;
     }

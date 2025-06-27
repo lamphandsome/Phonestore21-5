@@ -109,23 +109,34 @@ async function loadABlog() {
 
 
 async function deleteBlog(id) {
-    var con = confirm("Xác nhận xóa bài viết này?")
-    if (con == false) {
-        return;
-    }
-    var url = 'http://localhost:8080/api/blog/admin/delete?id=' + id;
+    const result = await Swal.fire({
+        title: 'Xác nhận xóa?',
+        text: 'Bạn có chắc muốn xóa bài viết này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Hủy',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33'
+    });
+
+    if (!result.isConfirmed) return;
+
+    const url = 'http://localhost:8080/api/blog/admin/delete?id=' + id;
     const response = await fetch(url, {
         method: 'DELETE',
         headers: new Headers({
             'Authorization': 'Bearer ' + token
         })
     });
+
     if (response.status < 300) {
-        toastr.success("xóa bài viết thành công!");
+        toastr.success("Xóa bài viết thành công!");
         loadBlog(0);
-    }
-    if (response.status == exceptionCode) {
-        var result = await response.json()
+    } else if (response.status === exceptionCode) {
+        const result = await response.json();
         toastr.warning(result.defaultMessage);
+    } else {
+        toastr.error("Đã xảy ra lỗi khi xóa.");
     }
 }

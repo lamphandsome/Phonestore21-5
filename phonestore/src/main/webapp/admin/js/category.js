@@ -101,7 +101,17 @@ async function saveCategory() {
 }
 
 async function deleteCategory(id) {
-    var con = confirm("Bạn chắc chắn muốn xóa danh mục này?");
+    const result = await Swal.fire({
+            title: 'Xác nhận',
+            text: "Bạn chắc chắn muốn xóa danh mục này?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        });
+        if (!result.isConfirmed) return;
     if (con == false) {
         return;
     }
