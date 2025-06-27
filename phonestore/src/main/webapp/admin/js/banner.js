@@ -121,26 +121,36 @@ async function saveBanner() {
 }
 
 async function deleteBanner(id) {
-    var con = confirm("Bạn chắc chắn muốn xóa banner này?");
-    if (con == false) {
-        return;
+        const result = await Swal.fire({
+                title: 'Xác nhận',
+                text: "Bạn chắc chắn muốn xóa banner này?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33'
+            });
+            if (!result.isConfirmed) return;
+        if (con == false) {
+            return;
+        }
+        var url = 'http://localhost:8080/api/banner/admin/delete?id=' + id;
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + token
+            })
+        });
+        if (response.status < 300) {
+            toastr.success("xóa banner thành công!");
+            loadBanner(0,"");
+        }
+        if (response.status == exceptionCode) {
+            var result = await response.json()
+            toastr.warning(result.defaultMessage);
+        }
     }
-    var url = 'http://localhost:8080/api/banner/admin/delete?id=' + id;
-    const response = await fetch(url, {
-        method: 'DELETE',
-        headers: new Headers({
-            'Authorization': 'Bearer ' + token
-        })
-    });
-    if (response.status < 300) {
-        toastr.success("xóa banner thành công!");
-        loadBanner(0,"");
-    }
-    if (response.status == exceptionCode) {
-        var result = await response.json()
-        toastr.warning(result.defaultMessage);
-    }
-}
 
 async function loadCategoryProduct() {
     var url = 'http://localhost:8080/api/category/public/findAll';

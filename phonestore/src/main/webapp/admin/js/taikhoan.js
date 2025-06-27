@@ -61,7 +61,17 @@ function searchTable() {
 
 
 async function lockOrUnlock(id, type) {
-    var con = confirm("Xác nhận hành động?");
+    const result = await Swal.fire({
+            title: 'Xác nhận',
+            text: "Xác nhận hành động?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        });
+        if (!result.isConfirmed) return;
     if (con == false) {
         return;
     }
