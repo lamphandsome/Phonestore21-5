@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="52fad11e-9c13-4edd-a1db-e82406324575" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/mobile_app/lib/models/product.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobile_app/lib/screens/product_list_screen.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobile_app/lib/services/product_api_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile_app/lib/screens/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile_app/lib/screens/home_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile_app/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/mobile_app/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile_app/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/mobile_app/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/phonestore/src/main/webapp/image/1fda76a01b2f4c86b92642e469f58fa0-free.png" beforeDir="false" afterPath="$PROJECT_DIR$/phonestore/src/main/webapp/image/logoo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/phonestore/src/main/webapp/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/phonestore/src/main/webapp/js/main.js" afterDir="false" />
-    </list>
+    <list default="true" id="52fad11e-9c13-4edd-a1db-e82406324575" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,13 +15,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "D:/Phonestore21-5/phonestore"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Phonestore21-5/phonestore&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
