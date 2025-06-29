@@ -1,36 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/order_provider.dart';
-import 'order_success_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../providers/cart_provider.dart';
+import '../services/invoice_service.dart';
+import '../services/momo_service.dart';
 
-class CheckoutScreen extends StatelessWidget {
-  final double totalAmount;
-  final List<dynamic> products;
+class CheckoutScreen extends StatefulWidget {
+  const CheckoutScreen({super.key});
 
-  const CheckoutScreen({super.key, required this.totalAmount, required this.products});
+  @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  String selectedMethod = 'cod';
+  final int fakeAddressId = 1;
+  bool isPlacingOrder = false;
+
+  void _placeOrder() async {
+    setState(() => isPlacingOrder = true);
+    final total = Provider.of<CartProvider>(context, listen: false).totalPrice;
+
+    if (selectedMethod == 'cod') {
+      final success = await InvoiceService.createInvoice(fakeAddressId);
+      _showSnackBar(success ? 'Đặt hàng thành công (COD)' : 'Đặt hàng thất bại!');
+      if (success) Navigator.pop(context);
+    } else {
+      try {
+        final momoUrl = await MomoService.createPaymentUrl(
+          returnUrl: 'https://yourapp.com/momo-return',
+          notifyUrl: 'https://yourapp.com/momo-notify',
+          shipCost: 20000,
+        );
+        if (await canLaunchUrl(Uri.parse(momoUrl))) {
+          await launchUrl(Uri.parse(momoUrl), mode: LaunchMode.externalApplication);
+        } else {
+          _showSnackBar('Không mở được MoMo');
+        }
+      } catch (e) {
+        _showSnackBar('Lỗi thanh toán MoMo');
+      }
+    }
+
+    setState(() => isPlacingOrder = false);
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final orderProvider = Provider.of<OrderProvider>(context);
+    final cart = Provider.of<CartProvider>(context);
+    final total = cart.totalPrice;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Thanh toán')),
-      body: Center(
+      appBar: AppBar(title: const Text('Xác nhận thanh toán')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Tổng tiền: \$${totalAmount.toStringAsFixed(2)}'),
+            const Text('Địa chỉ nhận hàng', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            const Text('123 Nguyễn Văn Cừ, Hà Nội (ID: 1)'),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final payUrl = await orderProvider.payWithMomo(totalAmount);
-                await orderProvider.addOrder(products, totalAmount, 'Momo');
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),
-                );
-              },
-              child: const Text('Thanh toán với Momo'),
+            const Text('Phương thức thanh toán', style: TextStyle(fontWeight: FontWeight.bold)),
+            RadioListTile(value: 'cod', groupValue: selectedMethod, onChanged: (val) => setState(() => selectedMethod = val!), title: const Text('COD')),
+            RadioListTile(value: 'momo', groupValue: selectedMethod, onChanged: (val) => setState(() => selectedMethod = val!), title: const Text('MoMo')),
+            const SizedBox(height: 20),
+            Text('Tổng tiền: ${total.toStringAsFixed(0)} đ', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: isPlacingOrder ? null : _placeOrder,
+                child: isPlacingOrder
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Xác nhận đặt hàng'),
+              ),
             )
           ],
         ),
