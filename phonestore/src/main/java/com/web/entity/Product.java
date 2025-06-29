@@ -41,27 +41,27 @@ public class Product {
 
     private Integer quantitySold;
 
-    private String screen;
+//    private String screen;
 
-    private String frontCamera;
+//    private String frontCamera;
 
-    private String backCamera;
+//    private String backCamera;
 
-    private String operaSystem;
+//    private String operaSystem;
 
-    private String cpu;
+//    private String cpu;
 
-    private String material;
+//    private String material;
 
-    private String accessory;
+//    private String accessory;
 
-    private String specialFeature;
+//    private String specialFeature;
 
-    private String sim;
+//    private String sim;
 
-    private String securityInfor;
+//    private String securityInfor;
 
-    private String mobileNetwork;
+//    private String mobileNetwork;
 
     private Boolean deleted = false;
 

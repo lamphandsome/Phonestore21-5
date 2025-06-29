@@ -7,7 +7,9 @@ import com.web.enums.StatusInvoice;
 import com.web.servive.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -55,6 +57,7 @@ public class InvoiceApi {
                                      @RequestParam(value = "to",required = false) Date to,
                                      @RequestParam(value = "paytype",required = false) PayType payType,
                                      @RequestParam(value = "status",required = false) StatusInvoice statusInvoice, Pageable pageable){
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("id").descending());
         Page<InvoiceResponse> result = invoiceService.findAllFull(from, to,payType, statusInvoice,pageable);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

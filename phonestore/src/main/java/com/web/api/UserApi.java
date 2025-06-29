@@ -20,7 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -40,13 +43,15 @@ public class UserApi {
     private final MailService mailService;
 
     @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
 
     @Autowired
     private GoogleOAuth2Service googleOAuth2Service;
@@ -72,9 +77,19 @@ public class UserApi {
     /*token device get from firebase*/
     @PostMapping("/login")
     public TokenDto authenticate(@RequestBody LoginDto loginDto) throws Exception {
-        TokenDto tokenDto = userService.login(loginDto.getUsername(), loginDto.getPassword(), loginDto.getTokenFcm());
-        return tokenDto;
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDto.getUsername(),
+                        loginDto.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Sau khi xác thực thành công → sinh token
+        return userService.login(loginDto.getUsername(), loginDto.getPassword(), loginDto.getTokenFcm());
     }
+
 
     @PostMapping("/regis")
     public ResponseEntity<?> regisUser(@RequestBody UserRequest userRequest) throws URISyntaxException {

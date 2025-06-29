@@ -9,12 +9,38 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
+
+
+    @Query("SELECT i FROM Invoice i WHERE i.shipper.id = :shipperId "
+            + "AND (:startDate IS NULL OR i.createdDate >= :startDate) "
+            + "AND (:endDate IS NULL OR i.createdDate <= :endDate) "
+            + "AND i.statusInvoice = 2"
+            + "AND (:payType IS NULL OR i.payType = :payType)")
+    List<Invoice> findByShipperWithFilters(
+            @Param("shipperId") Long shipperId,
+            @Param("startDate") java.util.Date startDate,      // phải là java.util.Date
+            @Param("endDate") java.util.Date endDate,
+            @Param("payType") PayType payType); // <- Phải là enum
+
+
+    @Query("SELECT i FROM Invoice i WHERE i.statusInvoice = 1")
+    List<Invoice> findByStatusInvoice();
+
+    @Query("SELECT i FROM Invoice i WHERE i.shipper.id = ?1 and i.statusInvoice = 3")
+    List<Invoice> findByShipperDone(Long shipperId);
+
+    @Query("SELECT i FROM Invoice i WHERE i.shipper.id = ?1 AND i.statusInvoice = ?2")
+    List<Invoice> findByShipperAndStatus(Long shipperId, StatusInvoice status);
+
 
     @Modifying
     @Transactional

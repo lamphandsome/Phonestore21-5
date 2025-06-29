@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Đơn hàng của Shipper</title>
+  <!-- Bootstrap & DataTables CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.datatables.net/1.13.2/css/dataTables.bootstrap5.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary-color: #004b23;
+      --secondary-color: #f1f3f5;
+      --accent-color: #ff7f50;
+    }
+    body {
+      background-color: var(--secondary-color);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .navbar, .bg-dark {
+      background-color: var(--primary-color) !important;
+    }
+    .navbar-brand, .btn-logout {
+      color: #fff;
+    }
+    .btn-logout {
+      background-color: var(--accent-color);
+      border: none;
+      transition: background-color 0.3s;
+    }
+    .btn-logout:hover {
+      background-color: #e76c41;
+    }
+    .card-filter {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-top: 4px solid var(--primary-color);
+      border-radius: .5rem;
+    }
+    .table thead {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+    .table tbody tr:hover {
+      background-color: rgba(0,75,35,0.05);
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #00331a;
+    }
+    .btn-success, .badge.bg-info {
+      background-color: var(--primary-color) !important;
+      color: #fff !important;
+    }
+    .deliver-btn {
+      display: inline-block;
+      margin-top: .25rem;
+    }
+    .order-card { display: none; }
+    @media (max-width: 768px) {
+      .table-responsive { display: none; }
+      .order-card { display: block; }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Shipper Dashboard</a>
+    <button class="btn btn-logout" onclick="dangXuat()">
+      <i class="fa fa-sign-out-alt me-1"></i> Logout
+    </button>
+  </div>
+</nav>
+<div class="container">
+  <!-- Filter Panel -->
+  <div class="card mb-4 card-filter">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label for="start" class="form-label">Từ ngày</label>
+          <input type="date" id="start" class="form-control" th:value="${selectedStart}"/>
+        </div>
+        <div class="col-md-3">
+          <label for="end" class="form-label">Đến ngày</label>
+          <input type="date" id="end" class="form-control" th:value="${selectedEnd}"/>
+        </div>
+        <div class="col-md-4">
+          <label for="type" class="form-label">Loại thanh toán</label>
+          <select id="type" class="form-select">
+            <option value="-1" th:selected="${selectedPayType == null or selectedPayType == '-1'}">-- Tất cả --</option>
+            <option value="MOMO" th:selected="${selectedPayType == 'MOMO'}">MOMO</option>
+            <option value="COD" th:selected="${selectedPayType == 'COD'}">COD</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary w-100" onclick="loadInvoice()">
+            <i class="fa fa-filter me-1"></i> Lọc
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Received -->
+  <h4 class="mb-3">Đơn hàng bạn đã nhận</h4>
+  <div class="table-responsive">
+    <table id="myOrdersTable" class="table table-striped table-bordered d-none d-md-table">
+      <thead>
+      <tr>
+        <th>Mã đơn</th><th>Ngày đặt</th><th>Tên</th><th>Địa chỉ</th>
+        <th>Giá trị</th><th>Phí ship</th><th>Thanh toán</th><th>Vận chuyển</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${myOrders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#dates.format(order.createdDate,'dd/MM/yyyy')}"></td>
+        <td th:text="${order.userAddress?.fullname}"></td>
+        <td th:text="${order.address}"></td>
+        <td th:text="${#numbers.formatCurrency(order.totalAmount)}"></td>
+        <td th:text="${#numbers.formatCurrency(order.shipCost)}"></td>
+        <td th:text="${order.payType}"></td>
+        <td>
+          <span class="badge bg-info me-2" th:text="${order.statusInvoice?.name()}"></span>
+          <button type="button" class="btn btn-sm btn-primary deliver-btn"
+                  th:if="${order.statusInvoice?.name()=='DANG_GUI'}"
+                  th:attr="data-id=${order.id}">
+            <i class="fa fa-truck me-1"></i> Đã giao xong
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Orders Available -->
+  <h4 class="mt-5 mb-3">Đơn hàng chờ nhận</h4>
+  <div class="table-responsive">
+    <table id="availableOrdersTable" class="table table-striped table-bordered d-none d-md-table">
+      <thead>
+      <tr>
+        <th>Mã đơn</th><th>Ngày đặt</th><th>Tên</th><th>Địa chỉ</th>
+        <th>Giá trị</th><th>Phí ship</th><th>Thanh toán</th><th>Thao tác</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${availableOrders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#dates.format(order.createdDate,'dd/MM/yyyy')}"></td>
+        <td th:text="${order.userAddress?.fullname}"></td>
+        <td th:text="${order.address}"></td>
+        <td th:text="${#numbers.formatCurrency(order.totalAmount)}"></td>
+        <td th:text="${#numbers.formatCurrency(order.shipCost)}"></td>
+        <td th:text="${order.payType}"></td>
+        <td>
+          <button type="button" class="btn btn-success btn-sm accept-btn"
+                  th:attr="data-id=${order.id},
+                             data-date=${#dates.format(order.createdDate,'dd/MM/yyyy')},
+                             data-fullname=${order.userAddress?.fullname},
+                             data-address=${order.address},
+                             data-total=${order.totalAmount},
+                             data-ship=${order.shipCost},
+                             data-paytype=${order.payType}">
+            <i class="fa fa-check me-1"></i> Nhận giao
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Completed Orders -->
+  <h4 class="mt-5 mb-3">Đơn hàng đã hoàn thành của bạn</h4>
+  <div class="table-responsive">
+    <table id="myOrdersDoneTable" class="table table-striped table-bordered">
+      <thead>
+      <tr>
+        <th>Mã đơn</th><th>Ngày đặt</th><th>Tên</th><th>Địa chỉ</th>
+        <th>Giá trị</th><th>Phí ship</th><th>Thanh toán</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${myOrdersDone}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#dates.format(order.createdDate,'dd/MM/yyyy')}"></td>
+        <td th:text="${order.userAddress?.fullname}"></td>
+        <td th:text="${order.address}"></td>
+        <td th:text="${#numbers.formatCurrency(order.totalAmount)}"></td>
+        <td th:text="${#numbers.formatCurrency(order.shipCost)}"></td>
+        <td th:text="${order.payType}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.2/js/dataTables.bootstrap5.min.js"></script>
+<script>
+  function dangXuat() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.replace('/dangnhap');
+  }
+  $(document).ready(function () {
+    const myTable = $('#myOrdersTable').DataTable({ paging: true, searching: false });
+    const availTable = $('#availableOrdersTable').DataTable({ paging: true, searching: false });
+    $('#myOrdersDoneTable').DataTable({ paging: true, searching: false });
+
+    // Format currency helper
+    function formatCurrency(amount) {
+      let num = Math.round(parseFloat(amount));
+      if (isNaN(num)) return amount;
+      return new Intl.NumberFormat('vi-VN').format(num) + ' ₫';
+    }
+
+    // Accept order
+    $('body').on('click', '.accept-btn', function () {
+      if (!confirm('Bạn có chắc chắn muốn nhận đơn này không?')) return;
+      const btn = $(this);
+      const id = btn.data('id');
+      $.post('/shipper/accept-order', { invoiceId: id }, function () {
+        alert('Đã nhận đơn thành công!');
+        const newRow = [
+          id,
+          btn.data('date'),
+          btn.data('fullname'),
+          btn.data('address'),
+          formatCurrency(btn.data('total')),
+          formatCurrency(btn.data('ship')),
+          btn.data('paytype'),
+          '<span class="badge bg-info text-dark">ĐANG_GUI</span>' +
+          '<button class="btn btn-sm btn-primary deliver-btn ms-2" data-id="' + id + '"><i class="fa fa-truck me-1"></i>Đã giao xong</button>'
+        ];
+        myTable.row.add(newRow).draw(false);
+        availTable.row(btn.closest('tr')).remove().draw(false);
+      });
+    });
+
+    // Mark delivered
+    $('body').on('click', '.deliver-btn', function () {
+      if (!confirm('Xác nhận đã giao hàng thành công?')) return;
+      const btn = $(this);
+      const id = btn.data('id');
+      $.post('/shipper/mark-delivered', { invoiceId: id }, function () {
+        alert('Đã giao hàng thành công!');
+        const cell = btn.closest('tr').find('td').eq(7);
+        cell.html('<span class="badge bg-success">ĐÃ_GIAO</span>');
+      });
+    });
+
+    // Filter
+    window.loadInvoice = function() {
+      const s = $('#start').val(), e = $('#end').val(), t = $('#type').val();
+      window.location.href = `/shipper?start=${s}&end=${e}&type=${t}`;
+    };
+  });
+</script>
+</body>
+</html>

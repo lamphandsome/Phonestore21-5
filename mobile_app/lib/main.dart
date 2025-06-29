@@ -6,6 +6,7 @@ import 'screens/home_screen.dart';
 import 'providers/cart_provider.dart';
 import 'screens/checkout_screen.dart';
 import 'screens/order_list_screen.dart';
+import 'screens/location_screen.dart';
 
 void main() {
   runApp(const MyApp());
