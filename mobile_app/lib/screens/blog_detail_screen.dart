@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_html/flutter_html.dart';
 import '../providers/blog_provider.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/error_widget.dart';
@@ -118,20 +119,87 @@ class _BlogDetailScreenState extends State<BlogDetailScreen> {
 
                 SizedBox(height: 16),
 
-                // Description
-                Text(
-                  blog.description,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey[700],
-                  ),
+                // Description with HTML support
+                Html(
+                  data: blog.description,
+                  style: {
+                    "body": Style(
+                      fontSize: FontSize(16),
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey[700],
+                      margin: Margins.zero,
+                      padding: HtmlPaddings.zero,
+                    ),
+                    "p": Style(
+                      margin: Margins.only(bottom: 8),
+                    ),
+                  },
                 ),
 
                 SizedBox(height: 16),
 
-                // Content
-                Text(blog.content, style: TextStyle(fontSize: 16, height: 1.5)),
+                // Content with HTML support
+                Html(
+                  data: blog.content,
+                  style: {
+                    "body": Style(
+                      fontSize: FontSize(16),
+                      lineHeight: LineHeight(1.5),
+                      margin: Margins.zero,
+                      padding: HtmlPaddings.zero,
+                    ),
+                    "p": Style(
+                      margin: Margins.only(bottom: 12),
+                    ),
+                    "h1": Style(
+                      fontSize: FontSize(24),
+                      fontWeight: FontWeight.bold,
+                      margin: Margins.only(top: 16, bottom: 8),
+                    ),
+                    "h2": Style(
+                      fontSize: FontSize(20),
+                      fontWeight: FontWeight.bold,
+                      margin: Margins.only(top: 14, bottom: 6),
+                    ),
+                    "h3": Style(
+                      fontSize: FontSize(18),
+                      fontWeight: FontWeight.bold,
+                      margin: Margins.only(top: 12, bottom: 4),
+                    ),
+                    "ul": Style(
+                      margin: Margins.only(left: 16, bottom: 12),
+                    ),
+                    "ol": Style(
+                      margin: Margins.only(left: 16, bottom: 12),
+                    ),
+                    "li": Style(
+                      margin: Margins.only(bottom: 4),
+                    ),
+                    "blockquote": Style(
+                      backgroundColor: Colors.grey[100],
+                      padding: HtmlPaddings.all(12),
+                      margin: Margins.only(bottom: 12),
+                      border: Border(
+                        left: BorderSide(
+                          color: Colors.grey[400]!,
+                          width: 4,
+                        ),
+                      ),
+                    ),
+                    "img": Style(
+                      width: Width(double.infinity),
+                      margin: Margins.only(bottom: 12),
+                    ),
+                    "a": Style(
+                      color: Colors.blue,
+                      textDecoration: TextDecoration.underline,
+                    ),
+                  },
+                  onLinkTap: (url, attributes, element) {
+                    // Handle link taps here if needed
+                    print("Link tapped: $url");
+                  },
+                ),
               ],
             ),
           );
