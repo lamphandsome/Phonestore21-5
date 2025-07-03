@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/cart_item.dart';
 
 class CartService {
-  static const String baseUrl = 'http://<your_backend_ip>:8080/api/cart/user';
+  static const String baseUrl = 'http://10.0.2.2:8080/api/cart/user';
 
   static Future<List<CartItem>> fetchCartItems() async {
     final res = await http.get(Uri.parse('$baseUrl/my-cart'));

@@ -4,7 +4,7 @@ import '../models/invoice.dart';
 import '../models/invoice_detail.dart';
 
 class InvoiceService {
-  static const baseUrl = 'http://<your_backend_ip>:8080/api';
+  static const baseUrl = 'http://10.0.2.2:8080/api';
 
   static Future<bool> createInvoice(int addressId) async {
     final res = await http.post(Uri.parse('$baseUrl/invoice/user/create?idAddress=$addressId'));
