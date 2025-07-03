@@ -224,11 +224,19 @@
 
     // Accept order
     $('body').on('click', '.accept-btn', function () {
-      if (!confirm('Bạn có chắc chắn muốn nhận đơn này không?')) return;
+Swal.fire({
+    title: 'Xác nhận',
+    text: 'Bạn có chắc chắn muốn nhận đơn này không?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Đồng ý',
+    cancelButtonText: 'Hủy'
+}).then((result) => {
+    if (!result.isConfirmed) return;
       const btn = $(this);
       const id = btn.data('id');
       $.post('/shipper/accept-order', { invoiceId: id }, function () {
-        alert('Đã nhận đơn thành công!');
+    Swal.fire('Thành công', 'Đã nhận đơn thành công!', 'success');
         const newRow = [
           id,
           btn.data('date'),
@@ -247,11 +255,19 @@
 
     // Mark delivered
     $('body').on('click', '.deliver-btn', function () {
-      if (!confirm('Xác nhận đã giao hàng thành công?')) return;
+Swal.fire({
+    title: 'Xác nhận',
+    text: 'Xác nhận đã giao hàng thành công?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Đồng ý',
+    cancelButtonText: 'Hủy'
+}).then((result) => {
+    if (!result.isConfirmed) return;
       const btn = $(this);
       const id = btn.data('id');
       $.post('/shipper/mark-delivered', { invoiceId: id }, function () {
-        alert('Đã giao hàng thành công!');
+    Swal.fire('Thành công', 'Đã giao hàng thành công!', 'success');
         const cell = btn.closest('tr').find('td').eq(7);
         cell.html('<span class="badge bg-success">ĐÃ_GIAO</span>');
       });
@@ -264,5 +280,6 @@
     };
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

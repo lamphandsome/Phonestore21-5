@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class MomoService {
-  static const String momoUrl = 'http://<your_backend_ip>:8080/api/urlpayment';
+  static const String momoUrl = 'http://10.0.2.2:8080/api/urlpayment';
 
   static Future<String> createPaymentUrl({
     required String returnUrl,
